@@ -35,6 +35,7 @@ func main() {
 	r.HandleFunc("/jobs/{id}/status", statusHandler.CheckJobStatus).Methods("GET")
 	r.HandleFunc("/downloads/{id}", downloadHandler.GetZip).Methods("GET")
 	r.HandleFunc("/metrics", metrics).Methods("GET")
+	r.HandleFunc("/login", userHandler.Login).Methods("POST")
 	r.HandleFunc("/videos/upload", videoHandler.UploadVideo).Methods("POST") // Nova rota de upload
 
 	log.Println("API rodando na porta :8080")
