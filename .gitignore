@@ -1,0 +1,15 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+main
+
+# OS specific
+.DS_Store
+.idea/
+.vscode/
+
+# Environment variables
+.env
