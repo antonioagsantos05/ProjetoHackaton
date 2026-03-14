@@ -2,25 +2,18 @@ package user
 
 import (
 	"time"
-
 	"github.com/google/uuid"
 )
 
-// User Aggregate Root
+// User representa a entidade 'usuario' do banco de dados.
 type User struct {
-	ID        uuid.UUID
-	TenantID  uuid.UUID
-	Email     string
-	Name      string
-	HashPass  string
-	Status    int
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time
-}
-
-// Repository define a interface de persistência para User
-type Repository interface {
-	Save(user *User) error
-	FindByEmail(email string) (*User, error)
+	ID        uuid.UUID  `json:"id"`
+	TenantID  uuid.UUID  `json:"tenant_id"`
+	Email     string     `json:"email"`
+	Nome      string     `json:"nome"`
+	HashSenha string     `json:"-"` // O hash da senha nunca deve ser exposto
+	Status    int16      `json:"status"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 }

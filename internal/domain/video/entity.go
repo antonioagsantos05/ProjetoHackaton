@@ -2,35 +2,29 @@ package video
 
 import (
 	"time"
-
 	"github.com/google/uuid"
 )
 
-type Status int
+// Status define os possíveis estados de um vídeo.
+type Status int16
 
 const (
-	StatusPending Status = iota
-	StatusProcessing
-	StatusCompleted
-	StatusFailed
+	StatusPending    Status = 0
+	StatusProcessing Status = 1
+	StatusCompleted  Status = 2
+	StatusFailed     Status = 3
 )
 
-// Video Aggregate Root
+// Video representa a entidade 'video' do banco de dados.
 type Video struct {
-	ID        uuid.UUID
-	TenantID  uuid.UUID
-	UserID    uuid.UUID
-	Title     string
-	Status    Status
-	Meta      string // Representado como string JSON para simplificar
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time // Suporte a soft delete conforme DDL
-}
-
-// Repository define a interface de persistência para Video
-type Repository interface {
-	Save(video *Video) error
-	FindByID(id uuid.UUID) (*Video, error)
-	UpdateStatus(id uuid.UUID, status Status) error
+	ID        uuid.UUID  `json:"id"`
+	TenantID  uuid.UUID  `json:"tenant_id"`
+	UserID    uuid.UUID  `json:"user_id"`
+	Title     string     `json:"title"`
+	VideoPath string     `json:"video_path"` // Caminho do objeto no storage
+	Status    Status     `json:"status"`
+	Meta      *string    `json:"meta,omitempty"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 }

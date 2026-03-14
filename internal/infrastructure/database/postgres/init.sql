@@ -1,10 +1,6 @@
 -- Inicialização do Banco de Dados PostgreSQL FIAP X
 -- Baseado no Documento Técnico de Banco de Dados FIAP X
 
--- Extensões úteis (Opcional, requer permissões de superusuário)
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
--- CREATE EXTENSION IF NOT EXISTS "pg_trgm";
-
 -- Tabela de Usuário
 CREATE TABLE usuario (
     id UUID PRIMARY KEY,
@@ -41,6 +37,7 @@ CREATE TABLE video (
     tenant_id UUID NOT NULL,
     usuario_id UUID REFERENCES usuario(id) ON DELETE SET NULL,
     titulo TEXT NOT NULL,
+    video_path TEXT, -- Caminho do objeto no storage (Minio)
     status SMALLINT NOT NULL DEFAULT 0,
     meta JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -66,7 +63,6 @@ CREATE INDEX idx_worker_status ON worker (status);
 CREATE INDEX idx_worker_capacidades_gin ON worker USING gin (capacidades);
 
 -- Tabela de Job Processamento
--- Nota: Particionamento omitido no script de init básico para simplificar, mas seria implementado em produção.
 CREATE TABLE job_processamento (
     id UUID PRIMARY KEY,
     tenant_id UUID NOT NULL,

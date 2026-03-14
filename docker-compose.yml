@@ -40,6 +40,7 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_SERVER_URL: http://localhost:9000
     command: server /data --console-address ":9001"
     volumes:
       - miniodata:/data
@@ -73,9 +74,14 @@ services:
         condition: service_healthy
     environment:
       - DB_HOST=postgres
+      - POSTGRES_USER=fiapx
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=fiapxdb
       - RABBITMQ_HOST=rabbitmq
-      - REDIS_HOST=redis
       - MINIO_HOST=minio
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - JWT_SECRET_KEY=uma-chave-secreta-muito-forte-e-longa
     command: ["./api"]
 
   worker:
@@ -87,9 +93,14 @@ services:
         condition: service_healthy
     environment:
       - DB_HOST=postgres
+      - POSTGRES_USER=fiapx
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=fiapxdb
       - RABBITMQ_HOST=rabbitmq
-      - REDIS_HOST=redis
       - MINIO_HOST=minio
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - JWT_SECRET_KEY=uma-chave-secreta-muito-forte-e-longa
     command: ["./worker"]
 
 volumes:
