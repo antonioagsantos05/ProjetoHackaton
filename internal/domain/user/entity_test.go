@@ -13,11 +13,11 @@ func TestUserEntity_Struct(t *testing.T) {
 		ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
 		TenantID:  uuid.MustParse("00000000-0000-0000-0000-000000000002"),
 		Email:     "test@fiap.com.br",
-		Name:      "Test User",
-		HashPass:  "hash123",
+		Nome:      "Test User",
+		HashSenha: "hash123",
 		Status:    1,
 		CreatedAt: now,
-		UpdatedAt: now,
+		UpdatedAt: &now,
 	}
 
 	if u.Email != "test@fiap.com.br" {
