@@ -15,6 +15,9 @@ const (
 	StatusFailed     Status = 3
 )
 
+// Job is an alias for JobProcessamento for API compatibility.
+type Job = JobProcessamento
+
 // JobProcessamento representa a entidade 'job_processamento' do banco de dados.
 type JobProcessamento struct {
 	ID          uuid.UUID  `json:"id"`

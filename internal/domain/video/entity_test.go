@@ -24,15 +24,16 @@ func TestVideoEntity_StatusConstants(t *testing.T) {
 
 func TestVideoEntity_Struct(t *testing.T) {
 	now := time.Now()
+	meta := "{}"
 	v := Video{
 		ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
 		TenantID:  uuid.MustParse("00000000-0000-0000-0000-000000000002"),
 		UserID:    uuid.MustParse("00000000-0000-0000-0000-000000000003"),
 		Title:     "My Video",
 		Status:    StatusPending,
-		Meta:      "{}",
+		Meta:      &meta,
 		CreatedAt: now,
-		UpdatedAt: now,
+		UpdatedAt: &now,
 	}
 
 	if v.Title != "My Video" {

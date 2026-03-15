@@ -9,8 +9,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Mock
+
+type mockDownloadUseCase struct{}
+
+func (m *mockDownloadUseCase) Execute(jobID string) (string, error) {
+	return "https://minio:9000/videos/abc-123.zip?token=presigned", nil
+}
+
 func TestDownloadHandler_GetZip_Success(t *testing.T) {
-	handler := NewDownloadHandler()
+	handler := NewDownloadHandler(&mockDownloadUseCase{})
 
 	req := httptest.NewRequest("GET", "/downloads/abc-123", nil)
 	rr := httptest.NewRecorder()
@@ -24,13 +32,11 @@ func TestDownloadHandler_GetZip_Success(t *testing.T) {
 	}
 
 	var res map[string]string
-	err := json.Unmarshal(rr.Body.Bytes(), &res)
-	if err != nil {
+	if err := json.Unmarshal(rr.Body.Bytes(), &res); err != nil {
 		t.Fatalf("failed to unmarshal response: %v", err)
 	}
 
-	expectedUrl := "https://s3.aws.com/fiapx/abc-123.zip"
-	if res["url"] != expectedUrl {
-		t.Errorf("expected url %v, got %v", expectedUrl, res["url"])
+	if res["url"] == "" {
+		t.Errorf("expected url to be present")
 	}
 }

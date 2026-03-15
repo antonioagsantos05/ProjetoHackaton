@@ -14,3 +14,5 @@ require (
 	github.com/swaggo/http-swagger v1.3.4
 	golang.org/x/crypto v0.22.0
 )
+
+replace github.com/fiap-x/video-processor => ./

@@ -8,8 +8,15 @@ main
 
 # OS specific
 .DS_Store
-.idea/
+.idea/a
 .vscode/
 
 # Environment variables
 .env
+
+# Temporary folders
+ProjetoCompleto/
+
+git 
+
+.claude

@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"database/sql"
-	"errors"
 	"testing"
 
 	domainJob "github.com/fiap-x/video-processor/internal/domain/job"

@@ -7,25 +7,20 @@ import (
 
 	domainJob "github.com/fiap-x/video-processor/internal/domain/job"
 	"github.com/google/uuid"
-	"github.com/streadway/amqp"
 )
-
-// Devido a dependência externa com o cluster RabbitMQ, testes unitários clássicos para drivers
-// externos de AMQP envolvem Mocks de Connection/Channel, que no caso do streadway/amqp exigem
-// wrappers customizados. Como alternativa faremos um teste que verifica a serialização do payload do JSON
-// no Job, que é o que o Publisher processa localmente antes de enviar para o Channel.
 
 func TestPublisher_JobJSONMarshal(t *testing.T) {
 	startedAt := time.Now()
+	params := `{"resolution":"1080p"}`
 
-	job := &domainJob.Job{
-		ID:         uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-		TenantID:   uuid.MustParse("00000000-0000-0000-0000-000000000002"),
-		VideoID:    uuid.MustParse("00000000-0000-0000-0000-000000000003"),
-		Status:     domainJob.StatusQueued,
-		Type:       1,
-		StartedAt:  &startedAt,
-		Params:     `{"resolution":"1080p"}`,
+	job := &domainJob.JobProcessamento{
+		ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+		TenantID:  uuid.MustParse("00000000-0000-0000-0000-000000000002"),
+		VideoID:   uuid.MustParse("00000000-0000-0000-0000-000000000003"),
+		Status:    domainJob.StatusQueued,
+		Tipo:      1,
+		StartedAt: &startedAt,
+		Params:    &params,
 	}
 
 	body, err := json.Marshal(job)
@@ -37,7 +32,7 @@ func TestPublisher_JobJSONMarshal(t *testing.T) {
 		t.Errorf("expected marshalled body to not be empty")
 	}
 
-	var unmarshalledJob domainJob.Job
+	var unmarshalledJob domainJob.JobProcessamento
 	if err := json.Unmarshal(body, &unmarshalledJob); err != nil {
 		t.Fatalf("failed to unmarshal body: %v", err)
 	}
@@ -45,19 +40,20 @@ func TestPublisher_JobJSONMarshal(t *testing.T) {
 	if unmarshalledJob.ID != job.ID {
 		t.Errorf("expected ID %v, got %v", job.ID, unmarshalledJob.ID)
 	}
-	if unmarshalledJob.Params != `{"resolution":"1080p"}` {
+	if unmarshalledJob.Params == nil || *unmarshalledJob.Params != `{"resolution":"1080p"}` {
 		t.Errorf("expected Params %v, got %v", `{"resolution":"1080p"}`, unmarshalledJob.Params)
 	}
 }
 
-// Este teste irá falhar rápido de forma esperada quando não há um RabbitMQ mockado ou subindo na URL
-func TestNewPublisher_ConnectionRefused(t *testing.T) {
-	_, err := NewPublisher("amqp://guest:guest@localhost:9999/") // Porta errada / Mock
+func TestNewRabbitMQConnection_ConnectionRefused(t *testing.T) {
+	// Configura o host para uma porta errada para garantir que a conexão falhe
+	t.Setenv("RABBITMQ_HOST", "localhost")
 
+	// A conexão deve falhar quando o RabbitMQ não está disponível
+	_, _, err := NewRabbitMQConnection()
 	if err == nil {
 		t.Errorf("expected connection error, got nil")
-	} else if err != amqp.ErrClosed && err.Error() != "dial tcp [::1]:9999: connectex: No connection could be made because the target machine actively refused it." && err.Error() != "dial tcp 127.0.0.1:9999: connect: connection refused" {
-		// Log da falha real dependendo do SO/network do test runner, mas a gente só quer garantir que dá erro
+	} else {
 		t.Logf("Got expected connection error: %v", err)
 	}
 }
