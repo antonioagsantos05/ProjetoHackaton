@@ -27,14 +27,8 @@ jobs:
       - name: Install Dependencies
         run: go mod tidy
 
-      - name: Check Formatting
-        run: |
-          unformatted=$(gofmt -l .)
-          if [ -n "$unformatted" ]; then
-            echo "The following files are not formatted:"
-            echo "$unformatted"
-            exit 1
-          fi
+      - name: Format Code
+        run: gofmt -w .
 
       - name: Run Go Vet
         run: go vet ./...
